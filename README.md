@@ -17,7 +17,7 @@
 
     - Continuous -> Discrete <br>: Q-table은 각각의 state에서 각각의 action이 가지는 Q(s,a)값을 모두 가지고 있다. 하지만 실제 state의 경우 연속적인 값을 가지고 있는 경우가 많기 때문에 무한한 종류의 state를 가질 수 있다. 따라서 Q-table을 만들기 위해선 연속적인 값인 state를 이산값으로 변환시켜주어야 한다. 다음 함수로 continuous한 값을 discrete한 값으로 변환해준다.<br>
     <br>
-    
+  
     ```
     def state_to_bucket(state):
         bucket_indice = []
