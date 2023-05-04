@@ -10,7 +10,9 @@
     S3이 처음 방문했을 때 이 셀의 Q값은 0이다. 보통 Q-table은 처음에 0으로 채워져있기 때문이다. 위에서 설명한 Q-value update 공식을 사용해 table을 업데이트한다. <br>
     Agent가 다양한 경로를 따라 상태(state)-행동(action) 쌍을 방문하기 시작하면 이전에 0이었던 셀이 채워진다.<br>
     <BR>
+    
     ![](https://wikidocs.net/images/page/165849/Fig_15.png) <br>
+    
     여러 과정을 지나 위 그림과 같이 셀이 채워졌다고 생각해보자. 학습 전 agent는 어떤 action이 다른 action보다 나은지 모른다. 그래서 높은 탐험률을 가지고 새로운 시도를 하게 된다. 하지만 위 그림과 같이 어느정도 Q-table의 셀이 채워지면 S2상태에서 취할 수 있는 action a1,a2,a3,a4 중 가장 Q값이 높은 action a4가 선택된다.
 
     - Continuous -> Discrete <br>: Q-table은 각각의 state에서 각각의 action이 가지는 Q(s,a)값을 모두 가지고 있다. 하지만 실제 state의 경우 연속적인 값을 가지고 있는 경우가 많기 때문에 무한한 종류의 state를 가질 수 있다. 따라서 Q-table을 만들기 위해선 연속적인 값인 state를 이산값으로 변환시켜주어야 한다. 다음 함수로 continuous한 값을 discrete한 값으로 변환해준다.<br>
@@ -32,6 +34,7 @@
             bucket_indice.append(bucket_index)
     return tuple(bucket_indice)
     ```
+    
     + 위 코드는 주어진 state를 버킷 인덱스로 변환하는 함수이다. 예를 들어, state가 [2.0, 3.5, -1.2, -5.0]이고 NUM_BUCKETS가 [3, 4, 3, 2]이라면 이 함수는 다음과 같은 방식으로 버킷 인덱스를 계산한다. <br>
     <br>    
     1. state 각 요소에 대해, 해당 요소가 버킷의 상한값인 (STATE_BOUNDS[i][1])보다 크거나 같으면 해당 요소의 버킷 인덱스를 NUM_BUCKETS[i]-1 로 설정한다. 또, 버킷의 하한값인 (STATE_BOUNDS[i][0])보다 작거나 같으면 해당 요소의 버킷 인덱스를 0으로 설정한다.
