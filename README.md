@@ -3,7 +3,9 @@
 * ***목표** : Q-table을 사용하는 Q-learning 에이전트를 이용해서 cartpole 문제 해결*
 
 * **배경지식** 
-    - Q-value update  <br>$Q_{t+1}(s_t,a_t)=Q(s_t,a_t)+\alpha _t(s_t,a_t)\times (R_{t+1}+\gamma \times max_aQ_t(s_{t+1},a)-Q(s_t,a_t))$ <br>
+    - Q-value update  <br> 
+
+ $Q_{t+1}(s_t,a_t)=Q(s_t,a_t)+\alpha _t(s_t,a_t)\times (R_{t+1}+\gamma \times max_aQ_t(s_{t+1},a)-Q(s_t,a_t))$
 
     - Q-table을 이용한 Q-learning <br>
     ![](https://wikidocs.net/images/page/165849/Fig_14.png) <br>
@@ -38,14 +40,12 @@
     
     + 위 코드는 주어진 state를 버킷 인덱스로 변환하는 함수이다. 예를 들어, state가 [2.0, 3.5, -1.2, -5.0]이고 NUM_BUCKETS가 [3, 4, 3, 2]이라면 이 함수는 다음과 같은 방식으로 버킷 인덱스를 계산한다. <br>
     <br>    
-    1. state 각 요소에 대해, 해당 요소가 버킷의 상한값인 (STATE_BOUNDS[i][1])보다 크거나 같으면 해당 요소의 버킷 인덱스를 NUM_BUCKETS[i]-1 로 설정한다. 또, 버킷의 하한값인 (STATE_BOUNDS[i][0])보다 작거나 같으면 해당 요소의 버킷 인덱스를 0으로 설정한다.
-
-    2. 그 외의 경우, 해당 요소를 STATE_BOUNDS[i]에 대응하는 버킷의 범위로 매핑하여 해당 요소의 버킷 인덱스를 계산한다. 구체적으로, 해당 버킷의 범위를 [STATE_BOUNDS[i][0], STATE_BOUNDS[i][1]]라고 하면, 버킷 인덱스를 계산하기 위해 다음과 같은 공식을 사용한다. <BR>
+1. state 각 요소에 대해, 해당 요소가 버킷의 상한값인 (STATE_BOUNDS[i][1])보다 크거나 같으면 해당 요소의 버킷 인덱스를 NUM_BUCKETS[i]-1 로 설정한다. 또, 버킷의 하한값인 (STATE_BOUNDS[i][0])보다 작거나 같으면 해당 요소의 버킷 인덱스를 0으로 설정한다.
+2. 그 외의 경우, 해당 요소를 STATE_BOUNDS[i]에 대응하는 버킷의 범위로 매핑하여 해당 요소의 버킷 인덱스를 계산한다. 구체적으로, 해당 버킷의 범위를 [STATE_BOUNDS[i][0], STATE_BOUNDS[i][1]]라고 하면, 버킷 인덱스를 계산하기 위해 다음과 같은 공식을 사용한다. <BR>
     
     **bucket_index = int(round(scaling*state[i] - offset))**  
     여기서, scaling은 (NUM_BUCKETS[i]-1)/(STATE_BOUNDS[i][1] - STATE_BOUNDS[i][0])으로 계산된 스케일링 인자이며, offset은 (NUM_BUCKETS[i]-1)*STATE_BOUNDS[i][0]/(STATE_BOUNDS[i][1] - STATE_BOUNDS[i][0])으로 계산된 오프셋 값이다. 
-
-    3. 최종적으로, 모든 요소에 대해 계산된 버킷 인덱스를 tuple 형태로 반환한다.
+3. 최종적으로, 모든 요소에 대해 계산된 버킷 인덱스를 tuple 형태로 반환한다.
     <br>
 * **구현**
 1. *Q-table을 위한 상태와 행동 공간 정의*
