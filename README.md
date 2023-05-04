@@ -3,8 +3,7 @@
 * ***목표** : Q-table을 사용하는 Q-learning 에이전트를 이용해서 cartpole 문제 해결*
 
 * **배경지식** 
-    - Q-value update  <br> 
-
+    - Q-value update  
  $Q_{t+1}(s_t,a_t)=Q(s_t,a_t)+\alpha _t(s_t,a_t)\times (R_{t+1}+\gamma \times max_aQ_t(s_{t+1},a)-Q(s_t,a_t))$
 
     - Q-table을 이용한 Q-learning <br>
@@ -17,10 +16,10 @@
     
     여러 과정을 지나 위 그림과 같이 셀이 채워졌다고 생각해보자. 학습 전 agent는 어떤 action이 다른 action보다 나은지 모른다. 그래서 높은 탐험률을 가지고 새로운 시도를 하게 된다. 하지만 위 그림과 같이 어느정도 Q-table의 셀이 채워지면 S2상태에서 취할 수 있는 action a1,a2,a3,a4 중 가장 Q값이 높은 action a4가 선택된다.
 
-    - Continuous -> Discrete <br>: Q-table은 각각의 state에서 각각의 action이 가지는 Q(s,a)값을 모두 가지고 있다. 하지만 실제 state의 경우 연속적인 값을 가지고 있는 경우가 많기 때문에 무한한 종류의 state를 가질 수 있다. 따라서 Q-table을 만들기 위해선 연속적인 값인 state를 이산값으로 변환시켜주어야 한다. 다음 함수로 continuous한 값을 discrete한 값으로 변환해준다.<br>
+    - Continuous -> Discrete <br>: Q-table은 각각의 state에서 각각의 action이 가지는 Q(s,a)값을 모두 가지고 있다. 하지만 실제 state의 경우 연속적인 값을 가지고 있는 경우가 많기 때문에 무한한 종류의 state를 가질 수 있다. 따라서 Q-table을 만들기 위해선 연속적인 값인 state를 이산값으로 변환시켜주어야 한다. 다음 함수로 continuous한 값을 discrete한 값으로 변환해준다.
     <br>
   
-    ```
+    ```python
     def state_to_bucket(state):
         bucket_indice = []
         for i in range(len(state)):
@@ -49,7 +48,7 @@
     <br>
 * **구현**
 1. *Q-table을 위한 상태와 행동 공간 정의*
-```
+```python
 # 상태
 NUM_BUCKETS = (1, 1, 6, 3)  # (x, x', theta, theta')
 # 행동
@@ -65,7 +64,7 @@ ACTION_INDEX = len(NUM_BUCKETS)
 + Q-table은 배열 모두 0을 채움으로써 초기화한다.
 + 탐험률 : 가보지 않은 여러 행동들(action)에 대한 결과를 알기 위해서는 지금 당장 최적이 아니라도 한번쯤 선택해 보아야한다. 만약 탐험률이 5%이면 20번의 행동을 선택할 기회가 있을 떄, 20번 중 1번은 무모한 탐험을 하게 된다.
 + 학습률 : Q-value update 식에서 $\alpha$ 값이 학습률에 해당한다. 현재의 Q값이 제시한 가치와 새로운 경험을 고려한 재귀적 가치를 $\alpha$ 값으로 선형 보강한 중간값으로 Q값을 업데이트하게 된다. 학습률은 0과 1 사이의 값에서 선택하게 된다. 보통 학습의 초반에는 큰 값을 넣어서 새로운 경험에 대한 가중치를 더 주고, 학습이 진행될수록 작은 값을 사용해서 현재의 정책을 신뢰하도록 한다. 
-```
+```python
 #Q-table 초기화
 q_table = np.zeros(NUM_BUCKETS + (NUM_ACTIONS,))
 
@@ -84,7 +83,7 @@ DEBUG_MODE = True
 + 만약  랜덤한 수를 뽑아 (random.random()) 
     * 탐험률보다 작으면 랜덤한 action을 선택 => 탐험(exploration)
     * 탐험률보다 크면 q_table에서 가장 큰 값을 가지는 action을 선택 => 활용(exploitation)
-```
+```python
 def select_action(state, explore_rate):
     
     if random.random() < explore_rate: 
@@ -102,7 +101,7 @@ def select_action(state, explore_rate):
     + t >= 24 : 1 과 $1-\log_{10}{t+1\over 25}$ 중 작은 수를 a라고 한다면 a가 최소 탐험률보다 작으면 최소 탐험률을 반환하고 a가 최소 탐험률보다 크면 a값 그대로 반환한다.
     + t < 24 : 1.0을 반환한다.
 
-```
+```python
 def get_explore_rate(t):
     if t >= 24:
         return max(MIN_EXPLORE_RATE, min(1, 1.0 - math.log10((t+1)/25)))
@@ -115,7 +114,7 @@ def get_explore_rate(t):
 * get_learning_rate 함수의 입력값 t
     + t >= 24 : 1 과 $1-\log_{10}{t+1\over 25}$ 중 작은 수를 a라고 한다면 a가 최소 학습률보다 작으면 최소 학습률을 반환하고 a가 최소 학습률보다 크면 a값 그대로 반환한다.
     + t < 24 : 1.0을 반환한다.
-```
+```python
 def get_learning_rate(t):
     if t >= 24:
          return max(MIN_LEARNING_RATE, min(0.5, 1.0 - math.log10((t+1)/25)))
@@ -129,7 +128,7 @@ def get_learning_rate(t):
     * 학습률과 탐험률을 1로 초기화시킨다.
     * Q-value update 공식의 $\gamma$ 에 해당하는 discount_factor 을 0.99로 정의한다. 
     * num_streaks는 이전 승리/패배 기록을 기반으로 현재 연속된 승리/패배 횟수를 나타내는 변수이다. 예를 들어, 만약 이전 5경기의 결과가 (승, 패, 패, 승, 승) 이라면, num_streaks는 현재 연속된 승리 횟수인 2를 나타낸다. 
-```
+```python
 learning_rate = get_learning_rate(0) #1.0 을 return
 explore_rate = get_explore_rate(0) #1.0 을 return
 discount_factor = 0.99  
@@ -140,7 +139,7 @@ num_streaks = 0
 + episode를 1000번 반복한다.
     + for episode in range(NUM_EPISODES):
         + for t in range(MAX_T): 
-```
+```python
 env.render() #행동을 취하기 이전에 환경에 대해 얻은 관찰값 출력
 
 # 수행할 action 선택
@@ -163,7 +162,7 @@ state_0 = state
 
 + for t in range(MAX_T) 반복문이 끝났을 때 t값이 미리 정의한 SOLVED_T값인 199 이상이면 num_streaks 를 1 증가시키고 그렇지 않으면 실패로 인해 연속적인 성공을 차단하기 때문에 num_streaks에 0을 대입한다.
 
-```
+```python
 if done:
     if (t >= SOLVED_T):
         num_streaks += 1
@@ -173,7 +172,7 @@ if done:
 <BR>
 
 * for episode in range(NUM_EPISODES) 반복문은 연속으로 성공한 횟수를 나타내는 변수인 num_streaks가 미리 정의해 둔 STREAK_TO_END의 값보다 클 때 종료된다.
-```
+```python
 if num_streaks > STREAK_TO_END:
     break
 ```
@@ -181,14 +180,14 @@ if num_streaks > STREAK_TO_END:
 
 + 다음 step을 위해 parameter update
     * 위에서 정의한 탐험률과 학습률 함수에서 t값 즉 episode가 24 이상일 때 탐험률, 학습률을 미리 정의한 식으로 update시키고 episode 값이 24미만일 때는 무조건 1.0을 return 했으니 23번째 episode까진 무조건 탐험만 하고(탐험률이 1.0 이라는 것은 100% 탐험만 한다는 뜻) 그 이후는 탐험률을 조절한다.
-```
+```python
 explore_rate = get_explore_rate(episode) 
 learning_rate = get_learning_rate(episode)
 ```
 <br>
 
 * 전체 코드
-```
+```python
 #cartpole 문제 q-learning으로 풀기
 import gym
 import numpy as np
