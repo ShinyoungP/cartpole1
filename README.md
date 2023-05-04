@@ -37,7 +37,7 @@
             bucket_indice.append(bucket_index)
     return tuple(bucket_indice)
     ```
-    
+   
     + 위 코드는 주어진 state를 버킷 인덱스로 변환하는 함수이다. 예를 들어, state가 [2.0, 3.5, -1.2, -5.0]이고 NUM_BUCKETS가 [3, 4, 3, 2]이라면 이 함수는 다음과 같은 방식으로 버킷 인덱스를 계산한다. <br>
     <br>    
 1. state 각 요소에 대해, 해당 요소가 버킷의 상한값인 (STATE_BOUNDS[i][1])보다 크거나 같으면 해당 요소의 버킷 인덱스를 NUM_BUCKETS[i]-1 로 설정한다. 또, 버킷의 하한값인 (STATE_BOUNDS[i][0])보다 작거나 같으면 해당 요소의 버킷 인덱스를 0으로 설정한다.
